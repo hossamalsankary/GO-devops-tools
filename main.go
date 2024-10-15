@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	"html/template"
 	"log"
@@ -12,7 +13,9 @@ import (
 
 func main() {
 
-	http.HandleFunc("/", handleRoot)
+	// http.HandleFunc("/", handleRoot)
+	fs := http.FileServer(http.Dir("./static"))
+	http.Handle("/", fs)
 	http.HandleFunc("/telnet", handleTelnet)
 
 	fmt.Printf("Server starting on port 8080... \n")
@@ -40,31 +43,30 @@ func handleRoot(w http.ResponseWriter, r *http.Request) {
 
 func handleTelnet(w http.ResponseWriter, r *http.Request) {
 	if r.Method == http.MethodPost {
+
 		ip := r.FormValue("ip")
 		port := r.FormValue("port")
 		address := fmt.Sprintf("%s:%s", ip, port)
 		// fmt.Fprintf(w, "Name: %s<br>IP: %s<br>Port: %s<br>", address, ip, port)
-		fmt.Printf("Name: %s<br>IP: %s<br>Port: %s<br>", address, ip, port)
+		//fmt.Printf("Name: %s IP: %s Port: %s", address, ip, port)
 		telnetResponds, ok := Telnet.Telnet(address)
-
+		response := map[string]interface{}{
+			"success": ok,
+			"message": telnetResponds,
+		}
+		responseJsonData, err := json.Marshal(response)
+		if err != nil {
+			log.Fatal(err)
+		}
 		// If connection is refused or any error occurs, display an alert to the user
 		if !ok {
 
-			fmt.Fprintf(w, `
-					<html>
-					<body>
-						<script>alert("Failed to connect to %s \n Error: %s");</script>
-						<a href="/">Go back</a>
-					</body>
-					</html>`, address, telnetResponds)
+			w.Header().Set("Content-Type", "application/json")
+			w.Write(responseJsonData)
+
 		} else {
-			fmt.Fprintf(w, `
-					<html>
-					<body>
-						<script>alert("successfully connected to %s \n message: %s");</script>
-						<a href="/">Go back</a>
-					</body>
-					</html>`, address, telnetResponds)
+			w.Header().Set("Content-Type", "application/json")
+			w.Write(responseJsonData)
 		}
 		return
 	}

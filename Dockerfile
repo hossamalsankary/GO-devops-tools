@@ -18,7 +18,7 @@ COPY . .
 RUN go build -o /app/telnet-server
 
 # Stage 2: Final stage - using a minimal Alpine image
-FROM alpine:latest
+FROM alpine:edge
 
 # Install necessary libraries
 RUN apk --no-cache add ca-certificates
@@ -28,6 +28,8 @@ WORKDIR /root/
 
 # Copy the built application from the builder stage
 COPY --from=builder /app/telnet-server .
+
+RUN chmod 777 /root/telnet-server
 
 # Expose the port the app will run on
 EXPOSE 8080

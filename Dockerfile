@@ -21,9 +21,6 @@ RUN go build -o /app/telnet-server
 # Stage 2: Final stage - using a minimal Alpine image
 FROM alpine:latest
 
-#RUN apk --no-cache add ca-certificates
-
-# Set the working directory for the final image
 WORKDIR /app/
 
 # Copy the built application from the builder stage

@@ -14,20 +14,21 @@ RUN go mod download
 # Copy the rest of the application source code
 COPY . .
 
+
 # Build the Go application
 RUN go build -o /app/telnet-server
 
 # Stage 2: Final stage - using a minimal Alpine image
 FROM alpine:latest
 
-# Install necessary libraries
-RUN apk --no-cache add ca-certificates
-
-# Set the working directory for the final image
-WORKDIR /root/
+WORKDIR /app/
 
 # Copy the built application from the builder stage
 COPY --from=builder /app/telnet-server .
+
+COPY ./static ./static
+
+RUN chmod +x ./telnet-server
 
 # Expose the port the app will run on
 EXPOSE 8080

@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Telnet Connection</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .container {
+            text-align: center;
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            width: 300px;
+        }
+        h1 {
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+        input[type="text"] {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 20px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-sizing: border-box;
+        }
+        input[type="submit"] {
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        input[type="submit"]:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Telnet Connection</h1>
+        <form id="telnet-form">
+            <label for="ip">IP Address:</label>
+            <input type="text" id="ip" name="ip" placeholder="Enter IP" required>
+
+            <label for="port">Port:</label>
+            <input type="text" id="port" name="port" placeholder="Enter Port" required>
+
+            <input type="submit" value="Connect">
+        </form>
+        <div id="response"></div>
+    </div>
+
+    <script>
+        // Attach an event listener to the form to prevent redirect on submit
+        document.getElementById('telnet-form').addEventListener('submit', function(event) {
+            event.preventDefault(); // Stop the form from redirecting
+            
+            // Collect form data
+            const ip = document.getElementById('ip').value;
+            const port = document.getElementById('port').value;
+    
+            // Send the form data using Fetch API
+            fetch('/telnet', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                },
+                body: new URLSearchParams({ ip: ip, port: port }) // Form data as URL-encoded
+            })
+            .then(response => response.json()) // Expect JSON response from server
+            .then(data => {
+                // Select the response div
+                const responseDiv = document.getElementById('response');
+    
+                // Display the response message in the div
+                if (data.success) {
+                    responseDiv.innerHTML = `<p style="color: green;">Success: ${data.message}</p>`;
+                } else {
+                    responseDiv.innerHTML = `<p style="color: red;">Failed: ${data.message}</p>`;
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                document.getElementById('response').innerHTML = '<p style="color: red;">An error occurred.</p>';
+            });
+        });
+    </script>
+</body>
+</html>

@@ -19,7 +19,7 @@ COPY . .
 RUN go build -o /app/telnet-server
 
 # Stage 2: Final stage - using a minimal Alpine image
-FROM alpine:latest
+FROM alpine
 
 WORKDIR /app/
 

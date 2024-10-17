@@ -14,12 +14,11 @@ RUN go mod download
 # Copy the rest of the application source code
 COPY . .
 
-
-# Build the Go application
-RUN go build -o /app/telnet-server
+# Ensure the binary is built for Linux and the right architecture (disable CGO)
+RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o /app/telnet-server
 
 # Stage 2: Final stage - using a minimal Alpine image
-FROM alpine
+FROM alpine:alpine
 
 WORKDIR /app/
 
@@ -28,6 +27,7 @@ COPY --from=builder /app/telnet-server .
 
 COPY ./static ./static
 
+# Ensure the binary is executable
 RUN chmod +x ./telnet-server
 
 # Expose the port the app will run on

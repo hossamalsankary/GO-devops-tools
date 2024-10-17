@@ -7,17 +7,23 @@ import (
 	"net/http"
 
 	Telnet "telnetapp/pkg/backend"
+	"telnetapp/pkg/curl" 
 )
 
 func main() {
 
-	fs := http.FileServer(http.Dir("./static"))
-	http.Handle("/", fs)
-	http.HandleFunc("/telnet", handleTelnet)
+    fs := http.FileServer(http.Dir("./static"))
+    http.Handle("/", fs)
+    http.HandleFunc("/telnet", handleTelnet)
+    http.HandleFunc("/curl", handleCurl)
 
-	fmt.Printf("Server starting on port 8080... \n")
-	http.ListenAndServe(":8080", nil)
+    fmt.Printf("Server starting on port 8080... \n")
+    http.ListenAndServe(":8080", nil)
 
+}
+
+func handleCurl(w http.ResponseWriter, r *http.Request) {
+    curl.HandleCurl(w, r)
 }
 
 func handleTelnet(w http.ResponseWriter, r *http.Request) {

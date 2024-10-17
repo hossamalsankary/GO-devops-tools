@@ -7,7 +7,8 @@
     <style>
         body {
             font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
+            background-color: #121212;
+            color: white;
             margin: 0;
             padding: 0;
             display: flex;
@@ -17,38 +18,72 @@
         }
         .container {
             text-align: center;
-            background-color: white;
-            padding: 20px;
+            background-color: #1e1e1e;
+            padding: 30px;
             border-radius: 10px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            width: 300px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.6);
+            width: 350px;
+            transition: transform 0.3s ease;
+        }
+        .container:hover {
+            transform: scale(1.05);
         }
         h1 {
             margin-bottom: 20px;
+            font-size: 1.8em;
+            color: #f4f4f4;
         }
         label {
             display: block;
             margin-bottom: 10px;
             font-weight: bold;
+            color: #cfcfcf;
         }
         input[type="text"] {
             width: 100%;
             padding: 10px;
             margin-bottom: 20px;
-            border: 1px solid #ccc;
+            border: 1px solid #555;
             border-radius: 5px;
             box-sizing: border-box;
+            background-color: #2e2e2e;
+            color: #fff;
         }
         input[type="submit"] {
-            padding: 10px 20px;
+            padding: 12px 24px;
             background-color: #4CAF50;
             color: white;
             border: none;
             border-radius: 5px;
             cursor: pointer;
+            font-weight: bold;
+            transition: background-color 0.3s ease, transform 0.3s ease;
         }
         input[type="submit"]:hover {
             background-color: #45a049;
+            transform: scale(1.05);
+        }
+        #response {
+            margin-top: 20px;
+            opacity: 0;
+            transition: opacity 0.5s ease, transform 0.5s ease;
+            transform: translateY(-20px);
+        }
+        #response.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        p {
+            margin: 0;
+        }
+        footer {
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            text-align: center;
+            color: rgb(31, 234, 16);
+            background-color: #1e1e1e;
+            padding: 10px;
         }
     </style>
 </head>
@@ -66,6 +101,10 @@
         </form>
         <div id="response"></div>
     </div>
+
+    <footer>
+        <p>Developed by BanqueMisr DevOps Team  sincerely .</p>
+    </footer>
 
     <script>
         // Attach an event listener to the form to prevent redirect on submit
@@ -95,10 +134,15 @@
                 } else {
                     responseDiv.innerHTML = `<p style="color: red;">Failed: ${data.message}</p>`;
                 }
+                
+                // Add animation by toggling the 'show' class
+                responseDiv.classList.add('show');
             })
             .catch(error => {
                 console.error('Error:', error);
-                document.getElementById('response').innerHTML = '<p style="color: red;">An error occurred.</p>';
+                const responseDiv = document.getElementById('response');
+                responseDiv.innerHTML = '<p style="color: red;">An error occurred.</p>';
+                responseDiv.classList.add('show');
             });
         });
     </script>

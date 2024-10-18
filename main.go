@@ -6,24 +6,27 @@ import (
 	"log"
 	"net/http"
 
-	Telnet "telnetapp/pkg/backend"
-	"telnetapp/pkg/curl" 
+	"telnetapp/pkg/curl"
+	Database "telnetapp/pkg/database"
+	Telnet "telnetapp/pkg/telnet"
 )
 
 func main() {
+	// (username string, password string, dbname string, host string)
+	Database.InitSQLDB("myuser", "dummy", "mydb", "127.0.0.1")
+	fs := http.FileServer(http.Dir("./static"))
+	http.Handle("/", fs)
+	http.HandleFunc("/telnet", handleTelnet)
+	http.HandleFunc("/curl", handleCurl)
+	http.HandleFunc("/db", handleDbConnection)
 
-    fs := http.FileServer(http.Dir("./static"))
-    http.Handle("/", fs)
-    http.HandleFunc("/telnet", handleTelnet)
-    http.HandleFunc("/curl", handleCurl)
-
-    fmt.Printf("Server starting on port 8080... \n")
-    http.ListenAndServe(":8080", nil)
+	fmt.Printf("Server starting on port 8080... \n")
+	http.ListenAndServe(":8080", nil)
 
 }
 
 func handleCurl(w http.ResponseWriter, r *http.Request) {
-    curl.HandleCurl(w, r)
+	curl.HandleCurl(w, r)
 }
 
 func handleTelnet(w http.ResponseWriter, r *http.Request) {
@@ -56,4 +59,9 @@ func handleTelnet(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+}
+
+func handleDbConnection(w http.ResponseWriter, r *http.Request) {
+
+	Database.InitSQLDB("myuser", "dummy", "mydb", "127.0.0.1")
 }

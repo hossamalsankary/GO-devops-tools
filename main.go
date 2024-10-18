@@ -13,7 +13,7 @@ import (
 
 func main() {
 	// (username string, password string, dbname string, host string)
-	Database.InitSQLDB("myuser", "dummy", "mydb", "127.0.0.1")
+	Database.InitSQLDB("myuser", "dumy", "mydb", "127.0.0.1")
 	fs := http.FileServer(http.Dir("./static"))
 	http.Handle("/", fs)
 	http.HandleFunc("/telnet", handleTelnet)
@@ -63,5 +63,5 @@ func handleTelnet(w http.ResponseWriter, r *http.Request) {
 
 func handleDbConnection(w http.ResponseWriter, r *http.Request) {
 
-	Database.InitSQLDB("myuser", "dummy", "mydb", "127.0.0.1")
+	Database.InitSQLDB("myuser", "dumy", "mydb", "127.0.0.1")
 }

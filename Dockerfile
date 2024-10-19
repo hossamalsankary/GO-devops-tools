@@ -18,10 +18,11 @@ COPY . .
 RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o /app/telnet-server
 
 # Stage 2: Final stage - using a minimal Alpine image
-FROM alpine:alpine
+FROM alpine:edge
+
 
 WORKDIR /app/
-
+RUN apk add --no-cache curl traceroute
 # Copy the built application from the builder stage
 COPY --from=builder /app/telnet-server .
 

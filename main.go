@@ -3,57 +3,65 @@ package main
 import (
 	"encoding/json"
 	"fmt"
-	"log"
 	"net/http"
-
-	Telnet "telnetapp/pkg/backend"
-	"telnetapp/pkg/curl" 
+	"telnetapp/pkg/curl"
+	Database "telnetapp/pkg/database"
+	Telnet "telnetapp/pkg/telnet"
 )
 
 func main() {
 
-    fs := http.FileServer(http.Dir("./static"))
-    http.Handle("/", fs)
-    http.HandleFunc("/telnet", handleTelnet)
-    http.HandleFunc("/curl", handleCurl)
+	// (username string, password string, dbname string, host string)
+	fs := http.FileServer(http.Dir("./static"))
+	http.Handle("/", fs)
+	http.HandleFunc("/telnet", handleTelnet)
+	http.HandleFunc("/curl", handleCurl)
+	http.HandleFunc("/db", handleDbConnection)
 
-    fmt.Printf("Server starting on port 8080... \n")
-    http.ListenAndServe(":8080", nil)
+	fmt.Printf("Server starting on port 8080... \n")
+	http.ListenAndServe(":8080", nil)
 
 }
 
 func handleCurl(w http.ResponseWriter, r *http.Request) {
-    curl.HandleCurl(w, r)
+	curl.HandleCurl(w, r)
 }
 
 func handleTelnet(w http.ResponseWriter, r *http.Request) {
 	if r.Method == http.MethodPost {
+		// Define a struct to hold the incoming JSON data
+		var requestData struct {
+			IP   string `json:"ip"`
+			Port string `json:"port"`
+		}
 
-		ip := r.FormValue("ip")
-		port := r.FormValue("port")
-		address := fmt.Sprintf("%s:%s", ip, port)
-		// fmt.Fprintf(w, "Name: %s<br>IP: %s<br>Port: %s<br>", address, ip, port)
-		//fmt.Printf("Name: %s IP: %s Port: %s", address, ip, port)
+		// Decode the JSON data from the request body
+		err := json.NewDecoder(r.Body).Decode(&requestData)
+		if err != nil {
+			http.Error(w, "Invalid JSON data", http.StatusBadRequest)
+			return
+		}
+
+		// Use the decoded data
+		address := fmt.Sprintf("%s:%s", requestData.IP, requestData.Port)
+
 		telnetResponds, ok := Telnet.Telnet(address)
 		response := map[string]interface{}{
 			"success": ok,
 			"message": telnetResponds,
 		}
-		responseJsonData, err := json.Marshal(response)
-		if err != nil {
-			log.Fatal(err)
-		}
-		// If connection is refused or any error occurs, display an alert to the user
-		if !ok {
 
-			w.Header().Set("Content-Type", "application/json")
-			w.Write(responseJsonData)
-
-		} else {
-			w.Header().Set("Content-Type", "application/json")
-			w.Write(responseJsonData)
-		}
+		// Set the response header and write the JSON response
+		w.Header().Set("Content-Type", "application/json")
+		json.NewEncoder(w).Encode(response)
 		return
 	}
 
+	// If the method is not POST, return an error
+	http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+}
+
+func handleDbConnection(w http.ResponseWriter, r *http.Request) {
+
+	Database.CheckDbconnection(w, r)
 }

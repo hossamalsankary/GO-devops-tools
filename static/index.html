@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title> Network Utilities </title>
+    <title>Network Utilities</title>
 
     <style>
         /* CSS Variables for Theme */
@@ -15,8 +15,8 @@
             --input-background: #1a1a1a;
             --input-border: #444;
             --alert-color: #ffeb3b;
-            --success-color: #4caf50;
-            --error-color: #f44336;
+            --success-color: #4caf50; /* Green */
+            --error-color: #f44336;   /* Red */
         }
 
         /* Updated Body Style */
@@ -278,6 +278,7 @@
             width: 100%;
             margin-bottom: 10px;
             transition: border-color 0.3s, box-shadow 0.3s;
+            display: none;
         }
 
         .textarea {
@@ -369,6 +370,15 @@
             border-radius: 4px;
             display: none;
             z-index: 1000;
+        }
+
+        /* Output Success and Error Styles */
+        .output-success pre {
+            color: var(--success-color);
+        }
+
+        .output-error pre {
+            color: var(--error-color);
         }
     </style>
 </head>
@@ -591,6 +601,10 @@
             output = '';
             document.getElementById('output').innerHTML = '';
 
+            // Remove any previous success/error classes
+            const outputElement = document.getElementById('output');
+            outputElement.classList.remove('output-success', 'output-error');
+
             // Display the command being executed
             output += `Executing: ${commandPreview}\n`;
             updateOutput();
@@ -681,8 +695,6 @@
                 endpoint = '/db';
             }
 
- 
-
             fetch(endpoint, {
                 method: 'POST',
                 headers: {
@@ -701,12 +713,29 @@
             .then(result => {
                 output += `${result.message}\n`;
                 updateOutput();
-                showToast('Command Executed', 'The command has been executed successfully.');
+
+                // Update the output area color based on success
+                const outputElement = document.getElementById('output');
+                if (result.success) {
+                    outputElement.classList.remove('output-error');
+                    outputElement.classList.add('output-success');
+                    showToast('Success', 'The command has been executed successfully.');
+                } else {
+                    outputElement.classList.remove('output-success');
+                    outputElement.classList.add('output-error');
+                    showToast('Error', 'An error occurred while executing the command.');
+                }
             })
             .catch(error => {
                 console.error('Error:', error);
                 output += `An error occurred: ${error.message}\n`;
                 updateOutput();
+
+                // Add error styling
+                const outputElement = document.getElementById('output');
+                outputElement.classList.remove('output-success');
+                outputElement.classList.add('output-error');
+
                 showToast('Error', `An error occurred: ${error.message}`);
             });
             console.log('Data:', data);

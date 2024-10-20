@@ -47,7 +47,7 @@
         }
 
         .space-y-4 > * + * {
-            margin-top: 20px;
+            margin-top: 9px;
         }
 
         .space-x-2 > * + * {
@@ -55,13 +55,13 @@
         }
 
         .input, .select, .textarea {
-            width: 100%;
-            padding: 10px;
+            width: 94%;
+            padding: 9px;
             background-color: var(--input-background);
             border: 1px solid var(--input-border);
             color: var(--text-color);
-            border-radius: 4px;
-            margin-bottom: 10px;
+            border-radius: 34px;
+            margin-bottom: 9px;
             transition: border-color 0.3s, box-shadow 0.3s;
         }
 
@@ -81,6 +81,11 @@
             transition: background-color 0.3s, box-shadow 0.3s;
         }
 
+        .button:disabled {
+            background-color: var(--secondary-color);
+            cursor: not-allowed;
+        }
+
         .button-outline {
             padding: 10px 20px;
             background-color: transparent;
@@ -91,7 +96,7 @@
             transition: background-color 0.3s, border-color 0.3s, box-shadow 0.3s;
         }
 
-        .button:hover, .button-outline:hover {
+        .button:hover:not(:disabled), .button-outline:hover {
             background-color: var(--primary-color-dark);
             border-color: var(--primary-color-dark);
             box-shadow: 0 4px 6px rgba(0,0,0,0.2);
@@ -285,18 +290,6 @@
             margin-right: 5px;
         }
 
-        .select {
-            background-color: var(--input-background);
-            color: var(--text-color);
-            border: 1px solid var(--input-border);
-            padding: 10px;
-            border-radius: 4px;
-            width: 100%;
-            margin-bottom: 10px;
-            transition: border-color 0.3s, box-shadow 0.3s;
-            display: none;
-        }
-
         .textarea {
             resize: vertical;
             background-color: var(--input-background);
@@ -315,6 +308,7 @@
         label {
             display: block;
             margin-bottom: 5px;
+            font-size: 17px;
         }
 
         .flex-row {
@@ -388,6 +382,10 @@
             z-index: 1000;
         }
 
+        .flex-1 {
+            flex: 1;
+        }
+
         /* Output Success and Error Styles */
         .output-success pre {
             color: var(--success-color);
@@ -396,22 +394,21 @@
         .output-error pre {
             color: var(--error-color);
         }
+
+        footer {
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            text-align: center;
+            color: rgb(31, 234, 16);
+            background-color: #1e1e1e;
+            padding: 10px;
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <h1>Enhanced Network Utilities IDP</h1>
-
-        <div class="flex space-y-4">
-            <div style="width: 20%;">
-                <label for="tool-select">Select a Tool:</label>
-                <select id="tool-select" class="select">
-                    <option value="telnet">Telnet</option>
-                    <option value="curl">Curl</option>
-                    <option value="oraclesql">Oracle SQL</option>
-                </select>
-            </div>
-        </div>
 
         <div class="tabs">
             <div class="tab active" data-tab="telnet">
@@ -433,14 +430,14 @@
             <div class="space-y-4">
                 <!-- Basic Options -->
                 <label>IP Address
-                    <div class="tooltip">?
+                    <div class="tooltip">
                         <span class="tooltiptext">Enter the IP address of the target server</span>
                     </div>
                 </label>
                 <input type="text" id="telnet-ip" class="input" placeholder="IP Address">
 
                 <label>Port Number
-                    <div class="tooltip">?
+                    <div class="tooltip">
                         <span class="tooltiptext">Enter the port number (1-65535) to connect to</span>
                     </div>
                 </label>
@@ -453,21 +450,21 @@
             <div class="space-y-4">
                 <!-- Basic Options -->
                 <label>URL
-                    <div class="tooltip">?
+                    <div class="tooltip">
                         <span class="tooltiptext">Enter the full URL including the protocol (e.g., https://example.com)</span>
                     </div>
                 </label>
                 <input type="text" id="curl-url" class="input" placeholder="URL">
 
                 <label>Timeout (seconds)
-                    <div class="tooltip">?
+                    <div class="tooltip">
                         <span class="tooltiptext">Specify the request timeout in seconds</span>
                     </div>
                 </label>
                 <input type="number" id="curl-timeout" class="input" placeholder="Timeout in seconds">
 
                 <label>Proxy
-                    <div class="tooltip">?
+                    <div class="tooltip">
                         <span class="tooltiptext">Enter the proxy URL if you want to use a proxy (e.g., http://proxyserver:8080)</span>
                     </div>
                 </label>
@@ -478,37 +475,47 @@
         <!-- Oracle SQL Tab Content -->
         <div class="tab-content" id="oraclesql">
             <div class="space-y-4">
-                <!-- Basic Options -->
-                <label>Host
-                    <div class="tooltip">?
-                        <span class="tooltiptext">Enter the hostname or IP address of the Oracle server</span>
+                <!-- Host and Port on the Same Line -->
+                <div class="flex space-x-4">
+                    <!-- Host Input -->
+                    <div class="flex-1">
+                        <label>Host
+                            <div class="tooltip">
+                                <span class="tooltiptext">Enter the hostname or IP address of the Oracle server</span>
+                            </div>
+                        </label>
+                        <input type="text" id="oraclesql-host" class="input" placeholder="Host">
                     </div>
-                </label>
-                <input type="text" id="oraclesql-host" class="input" placeholder="Host">
-
-                <label>Port Number
-                    <div class="tooltip">?
-                        <span class="tooltiptext">Specify the port number used for the Oracle connection (default is usually 1521)</span>
+                    <!-- Port Input -->
+                    <div class="flex-1">
+                        <label>Port Number
+                            <div class="tooltip">
+                                <span class="tooltiptext">Specify the port number used for the Oracle connection (default is usually 1521)</span>
+                            </div>
+                        </label>
+                        <input type="text" id="oraclesql-port" class="input" placeholder="Port Number" value="1521">
                     </div>
-                </label>
-                <input type="text" id="oraclesql-port" class="input" placeholder="Port Number" value="1521">
+                </div>
 
+                <!-- Database Name -->
                 <label>Database Name
-                    <div class="tooltip">?
+                    <div class="tooltip">
                         <span class="tooltiptext">Provide the Oracle database name</span>
                     </div>
                 </label>
                 <input type="text" id="oraclesql-dbname" class="input" placeholder="Database Name">
 
+                <!-- Username -->
                 <label>Username
-                    <div class="tooltip">?
+                    <div class="tooltip">
                         <span class="tooltiptext">Enter your Oracle database username</span>
                     </div>
                 </label>
                 <input type="text" id="oraclesql-username" class="input" placeholder="Username">
 
+                <!-- Password -->
                 <label>Password
-                    <div class="tooltip">?
+                    <div class="tooltip">
                         <span class="tooltiptext">Provide your Oracle database password</span>
                     </div>
                 </label>
@@ -525,7 +532,7 @@
         </div>
 
         <div class="space-x-2">
-            <button class="button" onclick="runCommand()">Run Command</button>
+            <button class="button" id="run-button" onclick="runCommand()" disabled>Run Command</button>
             <button class="button-outline" onclick="resetOptions()">Reset</button>
         </div>
 
@@ -542,7 +549,9 @@
             <button class="button-outline" onclick="downloadOutput()">Download Output</button>
         </div>
     </div>
-
+    <footer>
+        <p>Developed by BanqueMisr DevOps Team sincerely.</p>
+    </footer>
     <!-- Toast Notification -->
     <div id="toast" class="toast"></div>
 
@@ -553,13 +562,6 @@
         let output = '';
         let commandPreview = '';
         let progressInterval;
-
-        document.getElementById('tool-select').addEventListener('change', function() {
-            selectedTool = this.value;
-            updateTabs();
-            resetOptions();
-            updateCommandPreview();
-        });
 
         function updateTabs() {
             const tabs = document.querySelectorAll('.tab');
@@ -613,6 +615,35 @@
             document.getElementById('command-preview').textContent = commandPreview;
         }
 
+        function checkRequiredFields() {
+            let isValid = true;
+
+            if (selectedTool === 'telnet') {
+                const ip = document.getElementById('telnet-ip').value.trim();
+                const port = document.getElementById('telnet-port').value.trim();
+                if (!ip || !port) {
+                    isValid = false;
+                }
+            } else if (selectedTool === 'curl') {
+                const url = document.getElementById('curl-url').value.trim();
+                if (!url) {
+                    isValid = false;
+                }
+            } else if (selectedTool === 'oraclesql') {
+                const host = document.getElementById('oraclesql-host').value.trim();
+                const port = document.getElementById('oraclesql-port').value.trim();
+                const dbname = document.getElementById('oraclesql-dbname').value.trim();
+                const username = document.getElementById('oraclesql-username').value.trim();
+                const password = document.getElementById('oraclesql-password').value.trim();
+                if (!host || !port || !dbname || !username || !password) {
+                    isValid = false;
+                }
+            }
+
+            // Enable or disable the Run Command button
+            document.getElementById('run-button').disabled = !isValid;
+        }
+
         function runCommand() {
             // Clear the output area
             output = '';
@@ -621,6 +652,12 @@
             // Remove any previous success/error classes
             const outputElement = document.getElementById('output');
             outputElement.classList.remove('output-success', 'output-error');
+
+            // Reset the progress bar
+            const progressBar = document.getElementById('progress-bar');
+            progressBar.style.width = '0%';
+            progressBar.setAttribute('data-progress', '0');
+            clearInterval(progressInterval);
 
             // Display the command being executed
             output += `Executing: ${commandPreview}\n`;
@@ -641,8 +678,6 @@
         function simulateProgress() {
             let progress = 0;
             const progressBar = document.getElementById('progress-bar');
-            progressBar.style.width = '0%';
-            progressBar.setAttribute('data-progress', '0');
             clearInterval(progressInterval);
             progressInterval = setInterval(() => {
                 progress += 1;
@@ -665,11 +700,6 @@
                 const ip = document.getElementById('telnet-ip').value;
                 const port = document.getElementById('telnet-port').value;
 
-                if (!ip || !port) {
-                    showToast('Error', 'Please enter both IP address and port.');
-                    return;
-                }
-
                 data = {
                     ip: ip,
                     port: port
@@ -680,11 +710,6 @@
                 const url = document.getElementById('curl-url').value;
                 const timeout = document.getElementById('curl-timeout').value;
                 const proxy = document.getElementById('curl-proxy').value;
-
-                if (!url) {
-                    showToast('Error', 'Please enter a URL.');
-                    return;
-                }
 
                 data = {
                     url: url,
@@ -699,11 +724,6 @@
                 const dbname = document.getElementById('oraclesql-dbname').value;
                 const username = document.getElementById('oraclesql-username').value;
                 const password = document.getElementById('oraclesql-password').value;
-
-                if (!host || !dbname || !username || !password) {
-                    showToast('Error', 'Please fill in all required fields.');
-                    return;
-                }
 
                 data = {
                     host: host,
@@ -778,6 +798,7 @@
                 document.getElementById('oraclesql-password').value = '';
             }
             updateCommandPreview();
+            checkRequiredFields(); // Added this line
             showToast('Options Reset', `${selectedTool.charAt(0).toUpperCase() + selectedTool.slice(1)} options have been reset to default values.`);
         }
 
@@ -803,20 +824,26 @@
             showToast('Output Downloaded', 'The output has been downloaded as a text file.');
         }
 
-        // Update command preview on input change
+        // Update command preview and check required fields on input change
         document.querySelectorAll('.tab-content input, .tab-content select, .tab-content textarea').forEach(element => {
-            element.addEventListener('input', updateCommandPreview);
-            element.addEventListener('change', updateCommandPreview);
+            element.addEventListener('input', () => {
+                updateCommandPreview();
+                checkRequiredFields();
+            });
+            element.addEventListener('change', () => {
+                updateCommandPreview();
+                checkRequiredFields();
+            });
         });
 
         // Tab Click Event Listeners
         document.querySelectorAll('.tab').forEach(tab => {
             tab.addEventListener('click', function() {
                 selectedTool = this.getAttribute('data-tab');
-                document.getElementById('tool-select').value = selectedTool;
                 updateTabs();
                 resetOptions();
                 updateCommandPreview();
+                checkRequiredFields(); // Added this line
             });
         });
 
@@ -829,8 +856,9 @@
             }, 3000);
         }
 
-        // Initialize command preview
+        // Initialize command preview and check required fields
         updateCommandPreview();
+        checkRequiredFields();
     </script>
 </body>
 </html>

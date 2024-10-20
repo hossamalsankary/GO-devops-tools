@@ -4,398 +4,11 @@
     <meta charset="UTF-8">
     <title>Network Utilities</title>
 
-    <style>
-        /* CSS Variables for Theme */
-        :root {
-            --background-color: #0d0d0d;
-            --text-color: #e0e0e0;
-            --primary-color: #1e88e5;
-            --primary-color-dark: #1565c0;
-            --secondary-color: #333;
-            --input-background: #1a1a1a;
-            --input-border: #444;
-            --alert-color: #ffeb3b;
-            --success-color: #4caf50; /* Green */
-            --error-color: #f44336;   /* Red */
-        }
-
-        /* Updated Body Style */
-        body {
-            background-color: var(--background-color);
-            color: var(--text-color);
-            font-family: 'Roboto', sans-serif;
-            margin: 0;
-            padding: 20px;
-        }
-
-        h1 {
-            font-size: 28px;
-            font-weight: bold;
-            margin-bottom: 20px;
-            text-align: center;
-        }
-
-        .container {
-            max-width: 900px;
-            margin: 0 auto;
-        }
-
-        .flex {
-            display: flex;
-            gap: 20px;
-            flex-wrap: wrap;
-        }
-
-        .space-y-4 > * + * {
-            margin-top: 20px;
-        }
-
-        .space-x-2 > * + * {
-            margin-left: 10px;
-        }
-
-        .input, .select, .textarea {
-            width: 100%;
-            padding: 10px;
-            background-color: var(--input-background);
-            border: 1px solid var(--input-border);
-            color: var(--text-color);
-            border-radius: 4px;
-            margin-bottom: 10px;
-            transition: border-color 0.3s, box-shadow 0.3s;
-        }
-
-        .input:focus, .select:focus, .textarea:focus {
-            border-color: var(--primary-color);
-            outline: none;
-            box-shadow: 0 0 5px var(--primary-color);
-        }
-
-        .button {
-            padding: 10px 20px;
-            background-color: var(--primary-color);
-            color: var(--text-color);
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            transition: background-color 0.3s, box-shadow 0.3s;
-        }
-
-        .button-outline {
-            padding: 10px 20px;
-            background-color: transparent;
-            color: var(--text-color);
-            border: 1px solid var(--primary-color);
-            border-radius: 4px;
-            cursor: pointer;
-            transition: background-color 0.3s, border-color 0.3s, box-shadow 0.3s;
-        }
-
-        .button:hover, .button-outline:hover {
-            background-color: var(--primary-color-dark);
-            border-color: var(--primary-color-dark);
-            box-shadow: 0 4px 6px rgba(0,0,0,0.2);
-        }
-
-        .tabs {
-            display: flex;
-            border-bottom: 1px solid var(--secondary-color);
-            margin-bottom: 20px;
-        }
-
-        .tab {
-            padding: 10px 20px;
-            cursor: pointer;
-            background-color: var(--input-background);
-            border: 1px solid var(--secondary-color);
-            border-bottom: none;
-            color: var(--text-color);
-            border-radius: 4px 4px 0 0;
-            margin-right: 5px;
-            display: flex;
-            align-items: center;
-            transition: background-color 0.3s;
-        }
-
-        .tab.active {
-            background-color: var(--primary-color);
-            border-color: var(--primary-color);
-        }
-
-        .tab-content {
-            opacity: 0;
-            max-height: 0;
-            overflow: hidden;
-            padding: 0 20px;
-            background-color: var(--input-background);
-            border: 1px solid var(--secondary-color);
-            border-radius: 0 4px 4px 4px;
-            color: var(--text-color);
-            transition: opacity 0.5s ease, max-height 0.5s ease;
-        }
-
-        .tab-content.active {
-            opacity: 1;
-            max-height: 1000px;
-            padding: 20px;
-        }
-
-        .tooltip {
-            position: relative;
-            display: inline-block;
-            cursor: help;
-            margin-left: 5px;
-        }
-
-        .tooltip .tooltiptext {
-            visibility: hidden;
-            width: 250px;
-            background-color: var(--secondary-color);
-            color: var(--text-color);
-            text-align: left;
-            padding: 10px;
-            border-radius: 4px;
-            position: absolute;
-            z-index: 1;
-            top: -5px;
-            left: 105%;
-            opacity: 0;
-            transition: opacity 0.3s ease, visibility 0.3s ease;
-        }
-
-        .tooltip:hover .tooltiptext {
-            visibility: visible;
-            opacity: 1;
-        }
-
-        .progress {
-            width: 100%;
-            background-color: var(--secondary-color);
-            height: 10px;
-            border-radius: 5px;
-            overflow: hidden;
-            margin: 20px 0;
-        }
-
-        .progress-bar {
-            height: 10px;
-            background-color: var(--primary-color);
-            width: 0%;
-            transition: width 0.5s ease;
-        }
-
-        .switch {
-            position: relative;
-            display: inline-block;
-            width: 40px;
-            height: 20px;
-            margin-right: 10px;
-        }
-
-        .switch input {
-            opacity: 0;
-            width: 0;
-            height: 0;
-        }
-
-        .slider {
-            position: absolute;
-            cursor: pointer;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background-color: var(--secondary-color);
-            transition: .4s;
-            border-radius: 34px;
-        }
-
-        .slider:before {
-            position: absolute;
-            content: "";
-            height: 14px;
-            width: 14px;
-            left: 3px;
-            bottom: 3px;
-            background-color: #fff;
-            transition: .4s;
-            border-radius: 50%;
-        }
-
-        input:checked + .slider {
-            background-color: var(--primary-color);
-        }
-
-        input:checked + .slider:before {
-            transform: translateX(18px);
-        }
-
-        .checkbox {
-            margin-right: 10px;
-        }
-
-        .alert {
-            display: flex;
-            align-items: center;
-            color: var(--alert-color);
-        }
-
-        .alert-icon {
-            margin-right: 5px;
-        }
-
-        .text-muted {
-            color: #999;
-        }
-
-        code {
-            background-color: var(--input-background);
-            padding: 10px;
-            display: block;
-            border-radius: 4px;
-            overflow-x: auto;
-        }
-
-        .text-green {
-            color: var(--success-color);
-        }
-
-        .text-red {
-            color: var(--error-color);
-        }
-
-        /* Icon styles */
-        .tab .icon {
-            margin-right: 5px;
-        }
-
-        .select {
-            background-color: var(--input-background);
-            color: var(--text-color);
-            border: 1px solid var(--input-border);
-            padding: 10px;
-            border-radius: 4px;
-            width: 100%;
-            margin-bottom: 10px;
-            transition: border-color 0.3s, box-shadow 0.3s;
-            display: none;
-        }
-
-        .textarea {
-            resize: vertical;
-            background-color: var(--input-background);
-            border: 1px solid var(--input-border);
-            color: var(--text-color);
-            border-radius: 4px;
-            padding: 10px;
-            transition: border-color 0.3s, box-shadow 0.3s;
-        }
-
-        .divider {
-            border-bottom: 1px solid var(--secondary-color);
-            margin: 20px 0;
-        }
-
-        label {
-            display: block;
-            margin-bottom: 5px;
-        }
-
-        .flex-row {
-            display: flex;
-            align-items: center;
-        }
-
-        .flex-row > * {
-            margin-right: 10px;
-        }
-
-        /* Advanced Options Animation */
-        .advanced-options {
-            opacity: 0;
-            max-height: 0;
-            overflow: hidden;
-            transition: opacity 0.5s ease, max-height 0.5s ease;
-        }
-
-        .advanced-options.show {
-            opacity: 1;
-            max-height: 1000px;
-        }
-
-        /* Terminal Styles */
-        .terminal {
-            background-color: #000; /* Black background */
-            color: #0f0; /* Green text */
-            font-family: 'Courier New', Courier, monospace; /* Monospace font */
-            padding: 15px;
-            border-radius: 4px;
-            height: 100px;
-            overflow-y: auto;
-            border: 1px solid var(--secondary-color);
-            position: relative;
-        }
-
-        .terminal pre {
-            margin: 0;
-            white-space: pre-wrap;
-        }
-
-        .terminal .cursor {
-            display: inline-block;
-            width: 10px;
-            height: 20px;
-            background-color: #0f0;
-            animation: blink 1s step-end infinite;
-            vertical-align: bottom;
-        }
-
-        @keyframes blink {
-            from, to {
-                background: transparent;
-            }
-            50% {
-                background: #0f0;
-            }
-        }
-
-        /* Toast notification */
-        .toast {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            background-color: var(--secondary-color);
-            color: var(--text-color);
-            padding: 15px 20px;
-            border-radius: 4px;
-            display: none;
-            z-index: 1000;
-        }
-
-        /* Output Success and Error Styles */
-        .output-success pre {
-            color: var(--success-color);
-        }
-
-        .output-error pre {
-            color: var(--error-color);
-        }
-    </style>
+    <link rel="stylesheet" href="main.css">
 </head>
 <body>
     <div class="container">
         <h1>Enhanced Network Utilities IDP</h1>
-
-        <div class="flex space-y-4">
-            <div style="width: 20%;">
-                <label for="tool-select">Select a Tool:</label>
-                <select id="tool-select" class="select">
-                    <option value="telnet">Telnet</option>
-                    <option value="curl">Curl</option>
-                    <option value="oraclesql">Oracle SQL</option>
-                </select>
-            </div>
-        </div>
 
         <div class="tabs">
             <div class="tab active" data-tab="telnet">
@@ -417,14 +30,14 @@
             <div class="space-y-4">
                 <!-- Basic Options -->
                 <label>IP Address
-                    <div class="tooltip">?
+                    <div class="tooltip">
                         <span class="tooltiptext">Enter the IP address of the target server</span>
                     </div>
                 </label>
                 <input type="text" id="telnet-ip" class="input" placeholder="IP Address">
 
                 <label>Port Number
-                    <div class="tooltip">?
+                    <div class="tooltip">
                         <span class="tooltiptext">Enter the port number (1-65535) to connect to</span>
                     </div>
                 </label>
@@ -437,65 +50,72 @@
             <div class="space-y-4">
                 <!-- Basic Options -->
                 <label>URL
-                    <div class="tooltip">?
+                    <div class="tooltip">
                         <span class="tooltiptext">Enter the full URL including the protocol (e.g., https://example.com)</span>
                     </div>
                 </label>
                 <input type="text" id="curl-url" class="input" placeholder="URL">
 
-                <label>Request Type
-                    <div class="tooltip">?
-                        <span class="tooltiptext">Select the HTTP method to use</span>
+                <label>Timeout (seconds)
+                    <div class="tooltip">
+                        <span class="tooltiptext">Specify the request timeout in seconds</span>
                     </div>
                 </label>
-                <select id="curl-method" class="select">
-                    <option value="GET">GET</option>
-                    <option value="POST">POST</option>
-                </select>
+                <input type="number" id="curl-timeout" class="input" placeholder="Timeout in seconds">
 
-                <label>Data/Body
-                    <div class="tooltip">?
-                        <span class="tooltiptext">Enter the data or body of the request</span>
+                <label>Proxy
+                    <div class="tooltip">
+                        <span class="tooltiptext">Enter the proxy URL if you want to use a proxy (e.g., http://proxyserver:8080)</span>
                     </div>
                 </label>
-                <textarea id="curl-data" class="textarea" placeholder="Data/Body"></textarea>
+                <input type="text" id="curl-proxy" class="input" placeholder="Proxy URL (optional)">
             </div>
         </div>
 
         <!-- Oracle SQL Tab Content -->
         <div class="tab-content" id="oraclesql">
             <div class="space-y-4">
-                <!-- Basic Options -->
-                <label>Host
-                    <div class="tooltip">?
-                        <span class="tooltiptext">Enter the hostname or IP address of the Oracle server</span>
+                <!-- Host and Port on the Same Line -->
+                <div class="flex space-x-4">
+                    <!-- Host Input -->
+                    <div class="flex-1">
+                        <label>Host
+                            <div class="tooltip">
+                                <span class="tooltiptext">Enter the hostname or IP address of the Oracle server</span>
+                            </div>
+                        </label>
+                        <input type="text" id="oraclesql-host" class="input" placeholder="Host">
                     </div>
-                </label>
-                <input type="text" id="oraclesql-host" class="input" placeholder="Host">
-
-                <label>Port Number
-                    <div class="tooltip">?
-                        <span class="tooltiptext">Specify the port number used for the Oracle connection (default is usually 1521)</span>
+                    <!-- Port Input -->
+                    <div class="flex-1">
+                        <label>Port Number
+                            <div class="tooltip">
+                                <span class="tooltiptext">Specify the port number used for the Oracle connection (default is usually 1521)</span>
+                            </div>
+                        </label>
+                        <input type="text" id="oraclesql-port" class="input" placeholder="Port Number" value="1521">
                     </div>
-                </label>
-                <input type="text" id="oraclesql-port" class="input" placeholder="Port Number" value="1521">
+                </div>
 
+                <!-- Database Name -->
                 <label>Database Name
-                    <div class="tooltip">?
+                    <div class="tooltip">
                         <span class="tooltiptext">Provide the Oracle database name</span>
                     </div>
                 </label>
                 <input type="text" id="oraclesql-dbname" class="input" placeholder="Database Name">
 
+                <!-- Username -->
                 <label>Username
-                    <div class="tooltip">?
+                    <div class="tooltip">
                         <span class="tooltiptext">Enter your Oracle database username</span>
                     </div>
                 </label>
                 <input type="text" id="oraclesql-username" class="input" placeholder="Username">
 
+                <!-- Password -->
                 <label>Password
-                    <div class="tooltip">?
+                    <div class="tooltip">
                         <span class="tooltiptext">Provide your Oracle database password</span>
                     </div>
                 </label>
@@ -512,12 +132,13 @@
         </div>
 
         <div class="space-x-2">
-            <button class="button" onclick="runCommand()">Run Command</button>
+            <button class="button" id="run-button" onclick="runCommand()" disabled>Run Command</button>
             <button class="button-outline" onclick="resetOptions()">Reset</button>
         </div>
 
+        <!-- Enhanced Progress Bar -->
         <div class="progress">
-            <div class="progress-bar" id="progress-bar"></div>
+            <div class="progress-bar" id="progress-bar" data-progress="0"></div>
         </div>
 
         <!-- Output Area -->
@@ -528,7 +149,9 @@
             <button class="button-outline" onclick="downloadOutput()">Download Output</button>
         </div>
     </div>
-
+    <footer>
+        <p>Developed by BanqueMisr DevOps Team sincerely.</p>
+    </footer>
     <!-- Toast Notification -->
     <div id="toast" class="toast"></div>
 
@@ -539,13 +162,6 @@
         let output = '';
         let commandPreview = '';
         let progressInterval;
-
-        document.getElementById('tool-select').addEventListener('change', function() {
-            selectedTool = this.value;
-            updateTabs();
-            resetOptions();
-            updateCommandPreview();
-        });
 
         function updateTabs() {
             const tabs = document.querySelectorAll('.tab');
@@ -576,11 +192,14 @@
 
                 case 'curl':
                     const curlUrl = document.getElementById('curl-url').value || '<url>';
-                    const curlMethod = document.getElementById('curl-method').value;
-                    const curlData = document.getElementById('curl-data').value;
-                    commandPreview = `curl -X ${curlMethod} "${curlUrl}"`;
-                    if (curlData && curlMethod !== 'GET') {
-                        commandPreview += ` -d '${curlData}'`;
+                    const curlTimeout = document.getElementById('curl-timeout').value || '30';
+                    const curlProxy = document.getElementById('curl-proxy').value || '';
+                    commandPreview = `curl "${curlUrl}"`;
+                    if (curlTimeout) {
+                        commandPreview += ` --max-time ${curlTimeout}`;
+                    }
+                    if (curlProxy) {
+                        commandPreview += ` --proxy "${curlProxy}"`;
                     }
                     break;
 
@@ -596,6 +215,35 @@
             document.getElementById('command-preview').textContent = commandPreview;
         }
 
+        function checkRequiredFields() {
+            let isValid = true;
+
+            if (selectedTool === 'telnet') {
+                const ip = document.getElementById('telnet-ip').value.trim();
+                const port = document.getElementById('telnet-port').value.trim();
+                if (!ip || !port) {
+                    isValid = false;
+                }
+            } else if (selectedTool === 'curl') {
+                const url = document.getElementById('curl-url').value.trim();
+                if (!url) {
+                    isValid = false;
+                }
+            } else if (selectedTool === 'oraclesql') {
+                const host = document.getElementById('oraclesql-host').value.trim();
+                const port = document.getElementById('oraclesql-port').value.trim();
+                const dbname = document.getElementById('oraclesql-dbname').value.trim();
+                const username = document.getElementById('oraclesql-username').value.trim();
+                const password = document.getElementById('oraclesql-password').value.trim();
+                if (!host || !port || !dbname || !username || !password) {
+                    isValid = false;
+                }
+            }
+
+            // Enable or disable the Run Command button
+            document.getElementById('run-button').disabled = !isValid;
+        }
+
         function runCommand() {
             // Clear the output area
             output = '';
@@ -604,6 +252,12 @@
             // Remove any previous success/error classes
             const outputElement = document.getElementById('output');
             outputElement.classList.remove('output-success', 'output-error');
+
+            // Reset the progress bar
+            const progressBar = document.getElementById('progress-bar');
+            progressBar.style.width = '0%';
+            progressBar.setAttribute('data-progress', '0');
+            clearInterval(progressInterval);
 
             // Display the command being executed
             output += `Executing: ${commandPreview}\n`;
@@ -624,17 +278,18 @@
         function simulateProgress() {
             let progress = 0;
             const progressBar = document.getElementById('progress-bar');
-            progressBar.style.width = '0%';
             clearInterval(progressInterval);
             progressInterval = setInterval(() => {
                 progress += 1;
+                if (progress > 100) progress = 100;
                 progressBar.style.width = progress + '%';
+                progressBar.setAttribute('data-progress', progress);
                 if (progress >= 100) {
                     clearInterval(progressInterval);
                     // After progress completes, send data to the backend
                     executeCommand();
                 }
-            }, 50);
+            }, 30);
         }
 
         function executeCommand() {
@@ -645,11 +300,6 @@
                 const ip = document.getElementById('telnet-ip').value;
                 const port = document.getElementById('telnet-port').value;
 
-                if (!ip || !port) {
-                    showToast('Error', 'Please enter both IP address and port.');
-                    return;
-                }
-
                 data = {
                     ip: ip,
                     port: port
@@ -658,18 +308,13 @@
 
             } else if (selectedTool === 'curl') {
                 const url = document.getElementById('curl-url').value;
-                const method = document.getElementById('curl-method').value;
-                const body = document.getElementById('curl-data').value;
-
-                if (!url) {
-                    showToast('Error', 'Please enter a URL.');
-                    return;
-                }
+                const timeout = document.getElementById('curl-timeout').value;
+                const proxy = document.getElementById('curl-proxy').value;
 
                 data = {
                     url: url,
-                    method: method,
-                    data: body
+                    timeout: parseFloat(timeout) || 30,
+                    proxy: proxy || ''
                 };
                 endpoint = '/curl';
 
@@ -679,11 +324,6 @@
                 const dbname = document.getElementById('oraclesql-dbname').value;
                 const username = document.getElementById('oraclesql-username').value;
                 const password = document.getElementById('oraclesql-password').value;
-
-                if (!host || !dbname || !username || !password) {
-                    showToast('Error', 'Please fill in all required fields.');
-                    return;
-                }
 
                 data = {
                     host: host,
@@ -748,8 +388,8 @@
                 document.getElementById('telnet-port').value = '';
             } else if (selectedTool === 'curl') {
                 document.getElementById('curl-url').value = '';
-                document.getElementById('curl-method').value = 'GET';
-                document.getElementById('curl-data').value = '';
+                document.getElementById('curl-timeout').value = '';
+                document.getElementById('curl-proxy').value = '';
             } else if (selectedTool === 'oraclesql') {
                 document.getElementById('oraclesql-host').value = '';
                 document.getElementById('oraclesql-port').value = '1521';
@@ -758,6 +398,7 @@
                 document.getElementById('oraclesql-password').value = '';
             }
             updateCommandPreview();
+            checkRequiredFields(); // Added this line
             showToast('Options Reset', `${selectedTool.charAt(0).toUpperCase() + selectedTool.slice(1)} options have been reset to default values.`);
         }
 
@@ -783,20 +424,26 @@
             showToast('Output Downloaded', 'The output has been downloaded as a text file.');
         }
 
-        // Update command preview on input change
+        // Update command preview and check required fields on input change
         document.querySelectorAll('.tab-content input, .tab-content select, .tab-content textarea').forEach(element => {
-            element.addEventListener('input', updateCommandPreview);
-            element.addEventListener('change', updateCommandPreview);
+            element.addEventListener('input', () => {
+                updateCommandPreview();
+                checkRequiredFields();
+            });
+            element.addEventListener('change', () => {
+                updateCommandPreview();
+                checkRequiredFields();
+            });
         });
 
         // Tab Click Event Listeners
         document.querySelectorAll('.tab').forEach(tab => {
             tab.addEventListener('click', function() {
                 selectedTool = this.getAttribute('data-tab');
-                document.getElementById('tool-select').value = selectedTool;
                 updateTabs();
                 resetOptions();
                 updateCommandPreview();
+                checkRequiredFields(); // Added this line
             });
         });
 
@@ -809,8 +456,9 @@
             }, 3000);
         }
 
-        // Initialize command preview
+        // Initialize command preview and check required fields
         updateCommandPreview();
+        checkRequiredFields();
     </script>
 </body>
 </html>

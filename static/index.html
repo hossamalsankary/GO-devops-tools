@@ -168,20 +168,36 @@
             opacity: 1;
         }
 
+        /* Enhanced Progress Bar */
         .progress {
             width: 100%;
             background-color: var(--secondary-color);
-            height: 10px;
-            border-radius: 5px;
+            height: 20px;
+            border-radius: 10px;
             overflow: hidden;
             margin: 20px 0;
+            position: relative;
         }
 
         .progress-bar {
-            height: 10px;
-            background-color: var(--primary-color);
+            height: 100%;
             width: 0%;
-            transition: width 0.5s ease;
+            background: linear-gradient(to right, #4caf50, #1e88e5);
+            border-radius: 10px;
+            transition: width 0.3s ease-in-out;
+            position: relative;
+        }
+
+        .progress-bar::after {
+            content: attr(data-progress) '%';
+            position: absolute;
+            right: 10px;
+            top: 0;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            color: #fff;
+            font-weight: bold;
         }
 
         .switch {
@@ -443,22 +459,19 @@
                 </label>
                 <input type="text" id="curl-url" class="input" placeholder="URL">
 
-                <label>Request Type
+                <label>Timeout (seconds)
                     <div class="tooltip">?
-                        <span class="tooltiptext">Select the HTTP method to use</span>
+                        <span class="tooltiptext">Specify the request timeout in seconds</span>
                     </div>
                 </label>
-                <select id="curl-method" class="select">
-                    <option value="GET">GET</option>
-                    <option value="POST">POST</option>
-                </select>
+                <input type="number" id="curl-timeout" class="input" placeholder="Timeout in seconds">
 
-                <label>Data/Body
+                <label>Proxy
                     <div class="tooltip">?
-                        <span class="tooltiptext">Enter the data or body of the request</span>
+                        <span class="tooltiptext">Enter the proxy URL if you want to use a proxy (e.g., http://proxyserver:8080)</span>
                     </div>
                 </label>
-                <textarea id="curl-data" class="textarea" placeholder="Data/Body"></textarea>
+                <input type="text" id="curl-proxy" class="input" placeholder="Proxy URL (optional)">
             </div>
         </div>
 
@@ -516,8 +529,9 @@
             <button class="button-outline" onclick="resetOptions()">Reset</button>
         </div>
 
+        <!-- Enhanced Progress Bar -->
         <div class="progress">
-            <div class="progress-bar" id="progress-bar"></div>
+            <div class="progress-bar" id="progress-bar" data-progress="0"></div>
         </div>
 
         <!-- Output Area -->
@@ -576,11 +590,14 @@
 
                 case 'curl':
                     const curlUrl = document.getElementById('curl-url').value || '<url>';
-                    const curlMethod = document.getElementById('curl-method').value;
-                    const curlData = document.getElementById('curl-data').value;
-                    commandPreview = `curl -X ${curlMethod} "${curlUrl}"`;
-                    if (curlData && curlMethod !== 'GET') {
-                        commandPreview += ` -d '${curlData}'`;
+                    const curlTimeout = document.getElementById('curl-timeout').value || '30';
+                    const curlProxy = document.getElementById('curl-proxy').value || '';
+                    commandPreview = `curl "${curlUrl}"`;
+                    if (curlTimeout) {
+                        commandPreview += ` --max-time ${curlTimeout}`;
+                    }
+                    if (curlProxy) {
+                        commandPreview += ` --proxy "${curlProxy}"`;
                     }
                     break;
 
@@ -625,16 +642,19 @@
             let progress = 0;
             const progressBar = document.getElementById('progress-bar');
             progressBar.style.width = '0%';
+            progressBar.setAttribute('data-progress', '0');
             clearInterval(progressInterval);
             progressInterval = setInterval(() => {
                 progress += 1;
+                if (progress > 100) progress = 100;
                 progressBar.style.width = progress + '%';
+                progressBar.setAttribute('data-progress', progress);
                 if (progress >= 100) {
                     clearInterval(progressInterval);
                     // After progress completes, send data to the backend
                     executeCommand();
                 }
-            }, 50);
+            }, 30);
         }
 
         function executeCommand() {
@@ -658,8 +678,8 @@
 
             } else if (selectedTool === 'curl') {
                 const url = document.getElementById('curl-url').value;
-                const method = document.getElementById('curl-method').value;
-                const body = document.getElementById('curl-data').value;
+                const timeout = document.getElementById('curl-timeout').value;
+                const proxy = document.getElementById('curl-proxy').value;
 
                 if (!url) {
                     showToast('Error', 'Please enter a URL.');
@@ -668,8 +688,8 @@
 
                 data = {
                     url: url,
-                    method: method,
-                    data: body
+                    timeout: parseFloat(timeout) || 30,
+                    proxy: proxy || ''
                 };
                 endpoint = '/curl';
 
@@ -748,8 +768,8 @@
                 document.getElementById('telnet-port').value = '';
             } else if (selectedTool === 'curl') {
                 document.getElementById('curl-url').value = '';
-                document.getElementById('curl-method').value = 'GET';
-                document.getElementById('curl-data').value = '';
+                document.getElementById('curl-timeout').value = '';
+                document.getElementById('curl-proxy').value = '';
             } else if (selectedTool === 'oraclesql') {
                 document.getElementById('oraclesql-host').value = '';
                 document.getElementById('oraclesql-port').value = '1521';

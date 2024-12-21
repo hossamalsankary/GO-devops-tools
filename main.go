@@ -7,6 +7,7 @@ import (
 	"telnetapp/pkg/curl"
 	Database "telnetapp/pkg/database"
 	Telnet "telnetapp/pkg/telnet"
+	vault "telnetapp/pkg/vault"
 )
 
 func main() {
@@ -17,6 +18,7 @@ func main() {
 	http.HandleFunc("/telnet", handleTelnet)
 	http.HandleFunc("/curl", handleCurl)
 	http.HandleFunc("/db", handleDbConnection)
+	http.HandleFunc("/vault", vault.GetVaultToken)
 
 	fmt.Printf("Server starting on port 8080... \n")
 	http.ListenAndServe(":8080", nil)

@@ -27,11 +27,13 @@ func GetVaultToken(w http.ResponseWriter, r *http.Request) {
 		fmt.Printf(clientIp, err)
 	}
 
-	fmt.Printf(clientIp)
+	clientIp = strings.TrimSpace(clientIp)
 
 	var ok bool
 
 	for i := range ipList {
+		fmt.Printf("IP: %v\n", ipList[i])
+		fmt.Printf("Client IP: %v\n", clientIp)
 		if clientIp == strings.TrimSpace(ipList[i]) {
 			ok = true
 

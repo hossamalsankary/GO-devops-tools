@@ -27,7 +27,7 @@ func GetVaultToken(w http.ResponseWriter, r *http.Request) {
 		fmt.Printf(clientIp, err)
 	}
 
-	fmt.Printf("%s\n", "clientIp")
+	fmt.Printf(clientIp)
 
 	var ok bool
 

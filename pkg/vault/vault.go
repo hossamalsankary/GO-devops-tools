@@ -17,36 +17,32 @@ func GetVaultToken(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 		return
 	}
-
-	host := strings.Split(r.Host, ":")[0]
-	fmt.Printf("Host: %v\n", host)
 	ip := os.Getenv("VAULT_IPS")
 	fmt.Printf("IP: %v\n", ip)
 	ipList := strings.Split(ip, ",")
+
 	remoteAddr := r.RemoteAddr
-	host, _, err := net.SplitHostPort(remoteAddr)
+	clientIp, _, err := net.SplitHostPort(remoteAddr)
 	if err != nil {
-		fmt.Printf(host, err)
+		fmt.Printf(clientIp, err)
 	}
 
-	// var ok bool
+	var ok bool
 
-	// for i := range ipList {
-	// 	if host == strings.TrimSpace(ipList[i]) {
-	// 		ok = true
+	for i := range ipList {
+		if clientIp == strings.TrimSpace(ipList[i]) {
+			ok = true
 
-	// 	} else {
+		} else {
 
-	// 		ok = false
-	// 	}
-	// }
-	fmt.Printf("IP List: %v\n", ipList)
-	fmt.Println(host)
+			ok = false
+		}
+	}
 
-	// if !ok {
-	// 	http.Error(w, "Forbidden", http.StatusForbidden)
-	// 	return
-	// }
+	if !ok {
+		http.Error(w, "Forbidden", http.StatusForbidden)
+		return
+	}
 	// Cache the JSON content
 	cachedJSON := Json.VaultJson
 

@@ -18,7 +18,6 @@ func GetVaultToken(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	ip := os.Getenv("VAULT_IPS")
-	fmt.Printf("IP: %v\n", ip)
 	ipList := strings.Split(ip, ",")
 
 	remoteAddr := r.RemoteAddr
@@ -29,17 +28,12 @@ func GetVaultToken(w http.ResponseWriter, r *http.Request) {
 
 	clientIp = strings.TrimSpace(clientIp)
 
-	var ok bool
+	var ok bool = false
 
-	for i := range ipList {
-		fmt.Printf("IP: %v\n", ipList[i])
-		fmt.Printf("Client IP: %v\n", clientIp)
-		if clientIp == strings.TrimSpace(ipList[i]) {
+	for _, ip := range ipList {
+		if clientIp == strings.TrimSpace(ip) {
 			ok = true
-
-		} else {
-
-			ok = false
+			break
 		}
 	}
 

@@ -14,7 +14,7 @@ RUN go mod download
 # Copy the rest of the application source code
 COPY . .
 
-RUN  VAULT_IPS="apple, banana, cherry, 127.0.0.1"
+ENV VAULT_IPS="41.235.69.116,127.0.0.1"
 # Ensure the binary is built for Linux and the right architecture (disable CGO)
 RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o /app/telnet-server
 
